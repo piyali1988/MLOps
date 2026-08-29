@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-df = pd.read_csv("data/machine-failure-prediction.csv")
+df = pd.read_csv("project/data/machine-failure-prediction.csv")
 df.drop(columns=["UDI"], inplace=True)
 
 # NOTE: 'Type' is intentionally left as raw strings (H/L/M).
@@ -17,10 +17,10 @@ Xtrain, Xtest, ytrain, ytest = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-Xtrain.to_csv("Xtrain.csv", index=False)
-Xtest.to_csv("Xtest.csv", index=False)
-ytrain.to_csv("ytrain.csv", index=False)
-ytest.to_csv("ytest.csv", index=False)
+Xtrain.to_csv("project/data/Xtrain.csv", index=False)
+Xtest.to_csv("project/data/Xtest.csv", index=False)
+ytrain.to_csv("project/data/ytrain.csv", index=False)
+ytest.to_csv("project/data/ytest.csv", index=False)
 
 print("Data prepared: train/test splits written.")
 print("Type values kept as:", sorted(X["Type"].unique()))
