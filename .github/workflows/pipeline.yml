@@ -1,0 +1,77 @@
+name: Machine Failure MLOps Pipeline
+
+on:
+  workflow_dispatch:      # lets you click "Run workflow" in the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  # ---------- JOB 1: Register Dataset ----------
+  register-dataset:
+    name: Register Dataset
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Register dataset
+        run: python model_building/register.py
+      - name: Upload registered dataset
+        uses: actions/upload-artifact@v4
+        with:
+          name: registered-data
+          path: data/machine-failure-prediction.csv
+
+  # ---------- JOB 2: Data Preparation ----------
+  data-preparation:
+    name: Data Preparation
+    needs: register-dataset          # waits for Job 1 to finish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Prepare data
+        run: python model_building/prep.py
+      - name: Upload train/test splits
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-splits
+          path: |
+            Xtrain.csv
+            Xtest.csv
+            ytrain.csv
+            ytest.csv
+
+  # ---------- JOB 3: Model Training ----------
+  model-training:
+    name: Model Training
+    needs: data-preparation          # waits for Job 2 to finish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Download train/test splits
+        uses: actions/download-artifact@v4
+        with:
+          name: data-splits          # brings Xtrain/Xtest/ytrain/ytest from Job 2
+      - name: Train model
+        run: python model_building/train.py
+      - name: Commit trained model
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add deployment/best_machine_failure_model_v1.joblib
+          git commit -m "Add trained model [skip ci]" || echo "No changes to commit"
+          git push
