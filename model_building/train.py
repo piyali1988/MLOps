@@ -41,7 +41,9 @@ grid.fit(Xtrain, ytrain)
 best_model = grid.best_estimator_
 print("Best params:", grid.best_params_)
 print(classification_report(ytest, best_model.predict(Xtest)))
+BASE_DIR = "/content/project/deployment"
 
 # Save next to app.py so the Streamlit app can load it directly
-joblib.dump(best_model, "deployment/best_machine_failure_model_v1.joblib")
-print("Model saved to deployment/best_machine_failure_model_v1.joblib")
+# joblib.dump(best_model, "project/deployment/best_machine_failure_model_v1.joblib")
+joblib.dump(best_model,f"{BASE_DIR}/best_machine_failure_model_v1.joblib")
+print("Model saved to project/deployment/best_machine_failure_model_v1.joblib")
