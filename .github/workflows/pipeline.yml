@@ -45,10 +45,10 @@ jobs:
         with:
           name: data-splits
           path: |
-            Xtrain.csv
-            Xtest.csv
-            ytrain.csv
-            ytest.csv
+            data/Xtrain.csv
+            data/Xtest.csv
+            data/ytrain.csv
+            data/ytest.csv
 
   # ---------- JOB 3: Model Training ----------
   model-training:
