@@ -1,7 +1,11 @@
+
 import os
 import streamlit as st
 import pandas as pd
 import joblib
+
+st.write("APP DIR:", os.path.dirname(__file__))
+st.write("FILES:", os.listdir(os.path.dirname(__file__)))
 
 # Load the model committed by the pipeline (sits next to this file)
 model_path = os.path.join(os.path.dirname(__file__), "best_machine_failure_model_v1.joblib")
